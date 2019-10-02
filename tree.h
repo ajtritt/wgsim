@@ -21,6 +21,7 @@ void read_tree(char ** nwk_ptr, double * curr_dist, double * weights, char ** na
     int s, m;   // s is starting index of nodes in the left tree, m is starting index of nodes in the right tree
 
     int read_blen = 0;
+    int read_ilabel = 0;
     char c = *nwk;
     s = *id;
     m = *id;
@@ -33,6 +34,7 @@ void read_tree(char ** nwk_ptr, double * curr_dist, double * weights, char ** na
             blen[blen_n] = '\0';
             read_blen = 0;
             nwk++;
+            read_ilabel = 1;
             break;
        } else if (c == ','){
             if (read_blen){ // add branch length to ret
@@ -42,13 +44,15 @@ void read_tree(char ** nwk_ptr, double * curr_dist, double * weights, char ** na
                 nwk++;
                 read_tree(&nwk, curr_dist, weights, names, id, nleaves, full_dmat);
             }
-        } else if (c == ':') {  // read branch length
+        } else if (c == ':' and !read_ilabel) {  // read branch length
             if (name_n > 0){   // we were reading a leaf node
                 name[name_n] = '\0';
                 names[(*id)++] = name;
             }
             read_blen = 1;
             nwk++;
+        } else if (c == '\''){
+            if (
         } else {           // reading branch lenght or name
             if (read_blen) {
                 blen[blen_n++] = c;
